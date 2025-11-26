@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="ar">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>لعبة الأبطال</title>
+  <script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser.min.js"></script>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <video id="bgvideo" autoplay muted loop playsinline>
+    <source src="background-video.mp4" type="video/mp4">
+  </video>
+
+  <div id="topbar">
+    <div id="score">النقاط: <span id="scoreVal">0</span></div>
+    <div id="timer">الوقت: <span id="timeVal">60</span></div>
+    <div id="goal">الهدف: <span id="goalVal">50</span></div>
+    </div>
+
+  <div id="gameContainer"></div>
+  <div id="message"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
