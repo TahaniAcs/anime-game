@@ -5,38 +5,21 @@ class Player extends Phaser.Physics.Arcade.Sprite {
     constructor(scene, x, y, textureKey) {
         const key = textureKey || 'zoro';
         super(scene, x, y, key); 
-
         scene.add.existing(this);
         scene.physics.add.existing(this);
-
         this.setCollideWorldBounds(true);
         this.setGravityY(800);
-        
-        // الحجم الكلاسيكي
         this.setDisplaySize(100, 150);
         this.body.setSize(this.width, this.height); 
-
         this.cursors = scene.input.keyboard.createCursorKeys();
     }
 
     update() {
         const speed = 300; 
-        
-        if (this.cursors.left.isDown) {
-            this.setVelocityX(-speed);
-            this.flipX = true; 
-        } 
-        else if (this.cursors.right.isDown) {
-            this.setVelocityX(speed);
-            this.flipX = false; 
-        } 
-        else {
-            this.setVelocityX(0);
-        }
-
-        if ((this.cursors.space.isDown || this.cursors.up.isDown) && this.body.touching.down) {
-            this.setVelocityY(-550);
-        }
+        if (this.cursors.left.isDown) { this.setVelocityX(-speed); this.flipX = true; } 
+        else if (this.cursors.right.isDown) { this.setVelocityX(speed); this.flipX = false; } 
+        else { this.setVelocityX(0); }
+        if ((this.cursors.space.isDown || this.cursors.up.isDown) && this.body.touching.down) { this.setVelocityY(-550); }
     }
 }
 
@@ -44,9 +27,7 @@ class Player extends Phaser.Physics.Arcade.Sprite {
    CLASS: SelectionScene (شاشة الاختيار)
    ========================================== */
 class SelectionScene extends Phaser.Scene {
-    constructor() {
-        super({ key: 'SelectionScene' });
-    }
+    constructor() { super({ key: 'SelectionScene' }); }
 
     preload() {
         this.load.image('luffy', 'see.png');
@@ -58,17 +39,11 @@ class SelectionScene extends Phaser.Scene {
     }
 
     create() {
-        // إخفاء الرسائل
         const msgEl = document.getElementById('message');
-        if (msgEl) {
-            msgEl.style.opacity = '0';
-            msgEl.style.pointerEvents = 'none';
-        }
-        
+        if (msgEl) { msgEl.style.opacity = '0'; msgEl.style.pointerEvents = 'none'; }
         const livesEl = document.getElementById('livesVal');
         if (livesEl) livesEl.parentElement.style.display = 'none';
 
-        // عنوان
         this.add.text(400, 80, 'اختر بطلك', {
             fontSize: '40px',
             fontFamily: 'Tajawal',
@@ -77,13 +52,10 @@ class SelectionScene extends Phaser.Scene {
             strokeThickness: 4
         }).setOrigin(0.5);
 
-        // === الإحداثيات الثابتة التي كانت تعمل معك (800x600) ===
-        // الصف الأول
         this.createCharacterButton(200, 250, 'luffy', 'لوفي');
         this.createCharacterButton(400, 250, 'goku', 'غوكو');
-        this.createCharacterButton(600, 250, 'girl', 'ساكورا'); // الاسم: ساكورا
+        this.createCharacterButton(600, 250, 'girl', 'ساكورا');
 
-        // الصف الثاني
         this.createCharacterButton(200, 450, 'nezuko', 'نيزوكو');
         this.createCharacterButton(400, 450, 'gon', 'غون');
         this.createCharacterButton(600, 450, 'zoro', 'زورو');
@@ -91,20 +63,14 @@ class SelectionScene extends Phaser.Scene {
 
     createCharacterButton(x, y, key, name) {
         this.add.circle(x, y, 70, 0x000000, 0.5);
-
         if (this.textures.exists(key)) {
             const img = this.add.image(x, y, key).setInteractive();
             img.setDisplaySize(100, 100);
-            
             const originalScale = img.scaleX; 
             img.on('pointerover', () => img.setScale(originalScale * 1.1));
             img.on('pointerout', () => img.setScale(originalScale));
-
-            img.on('pointerdown', () => {
-                this.scene.start('MainScene', { character: key });
-            });
+            img.on('pointerdown', () => { this.scene.start('MainScene', { character: key }); });
         }
-
         this.add.text(x, y + 85, name, {
             fontSize: '20px',
             fontFamily: 'Tajawal',
@@ -127,9 +93,7 @@ class MainScene extends Phaser.Scene {
         this.selectedCharacter = 'zoro'; 
     }
 
-    init(data) {
-        if (data.character) this.selectedCharacter = data.character;
-    }
+    init(data) { if (data.character) this.selectedCharacter = data.character; }
 
     preload() {
         this.load.image('taqat', 'taqat.png');   
@@ -137,21 +101,14 @@ class MainScene extends Phaser.Scene {
     }
 
     create() {
-        this.lives = 3; 
-        this.score = 0;
-        this.timeLeft = 60;
-        this.isGameOver = false;
+        this.lives = 3; this.score = 0; this.timeLeft = 60; this.isGameOver = false;
         this.cameras.main.setBackgroundColor('rgba(0,0,0,0)');
 
         const msgEl = document.getElementById('message');
-        if (msgEl) {
-            msgEl.style.opacity = '0';
-            msgEl.style.pointerEvents = 'none';
-        }
-
+        if (msgEl) { msgEl.style.opacity = '0'; msgEl.style.pointerEvents = 'none'; }
+        
         this.setupHTMLUI();
 
-        // الأرضية (مضبوطة على 800)
         const ground = this.add.rectangle(400, 580, 800, 20, 0x00fff2).setAlpha(0);
         this.physics.add.existing(ground, true);
 
@@ -175,8 +132,7 @@ class MainScene extends Phaser.Scene {
         this.time.addEvent({ delay: 2000, callback: this.spawnHazards, callbackScope: this, loop: true });
         this.time.addEvent({ delay: 8000, callback: this.spawnDrink, callbackScope: this, loop: true });
 
-        this.updateUI();
-        this.updateLivesUI();
+        this.updateUI(); this.updateLivesUI();
     }
 
     setupHTMLUI() {
@@ -189,23 +145,24 @@ class MainScene extends Phaser.Scene {
             livesContainer = document.createElement('div');
             livesContainer.id = 'livesContainer';
             livesContainer.innerHTML = `الصحة: <span id="livesVal" style="letter-spacing:2px">❤️❤️❤️</span>`;
-            topbar.appendChild(livesContainer);
+            
+            // نضع القلوب قبل اللوقو الأخير (الذي هو في اليسار)
+            // في HTML اللوقو الأخير هو آخر عنصر
+            // insertBefore يضع العنصر قبل الأخير
+            topbar.insertBefore(livesContainer, topbar.lastElementChild);
+            
         } else if (livesContainer) {
             livesContainer.style.display = 'block';
         }
     }
 
-    update() {
-        if (this.isGameOver) return;
-        this.player.update();
-    }
+    update() { if (!this.isGameOver) this.player.update(); }
 
     spawnCollectible() {
         if (this.isGameOver) return;
         const x = Phaser.Math.Between(50, 750);
         const keys = ['taqat', 'ertwaa'];
         const key = Phaser.Math.RND.pick(keys);
-
         if (this.textures.exists(key)) {
             const item = this.collectibles.create(x, -50, key);
             item.setDisplaySize(60, 60);
@@ -219,7 +176,6 @@ class MainScene extends Phaser.Scene {
         if (this.isGameOver) return;
         const x = Phaser.Math.Between(50, 750);
         const rand = Math.random();
-
         if (rand < 0.4) this.createEmojiHazard(x, '💣', 'bomb');
         else if (rand < 0.8) this.createEmojiHazard(x, '🔥', 'fire');
         else this.createEmojiBox(x, '📦');
@@ -382,13 +338,10 @@ class MainScene extends Phaser.Scene {
     }
 }
 
-/* ==========================================
-   إعدادات اللعبة (Config) - رجعناها 800x600
-   ========================================== */
 const config = {
     type: Phaser.AUTO,
     parent: "gameContainer",
-    width: 800, // الدقة السابقة
+    width: 800,
     height: 600,
     transparent: true,
     physics: {
